@@ -23,7 +23,7 @@ if [ -d $ASSETS_CACHE_DIR ]; then
 	diff -u $DATA_DIR/cached-assets $DATA_DIR/app-assets > $DATA_DIR/diff
 	echo "Change in assets:" | indent
 	cat $DATA_DIR/diff | indent
-	if [ -x grep -q ^+ $DATA_DIR/diff ]; then
+	if grep -q ^+ $DATA_DIR/diff; then
 		echo "New assets found" | indent
 		CODE_RELEASE=0
 	else
