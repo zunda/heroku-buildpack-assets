@@ -1,0 +1,20 @@
+#!/bin/sh
+
+indent() {
+  sed -u 's/^/       /'
+}
+
+run() {
+	echo \$ "$*" | indent
+	eval "*$" | indent
+}
+
+echo "-----> heroku-buildpack-assets"
+
+BUILD_DIR=$1
+CACHE_DIR=$2
+ENV_DIR=$3
+
+run ls -R $BUILD_DIR
+run ls -R $CACHE_DIR
+run ls -R $ENV_DIR
