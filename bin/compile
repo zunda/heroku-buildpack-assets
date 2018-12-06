@@ -6,7 +6,7 @@ indent() {
 
 run() {
 	echo \$ "$*" | indent
-	eval "*$" | indent
+	eval "$*" 2>&1 | indent
 }
 
 echo "-----> heroku-buildpack-assets"
