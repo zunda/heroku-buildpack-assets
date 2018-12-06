@@ -29,4 +29,5 @@ else
 fi
 
 echo "-----> Caching current assets"
+mkdir -p $ASSETS_CACHE_DIR
 rsync -av --delete $BUILD_DIR/$ASSETS_DIR/ $ASSETS_CACHE_DIR/
