@@ -18,8 +18,8 @@ DATA_DIR=`mktemp -d || exit 1`
 echo "-----> Checking updated assets"
 CODE_RELEASE=1
 if [ -d $ASSETS_CACHE_DIR ]; then
-	find $BUILD_DIR/$ASSETS_DIR -type f | sort > $DATA_DIR/app-assets
-	find $ASSETS_CACHE_DIR -type f | sort > $DATA_DIR/cached-assets
+	cd $BUILD_DIR/$ASSETS_DIR; find . -type f | sort > $DATA_DIR/app-assets
+	cd $ASSETS_CACHE_DIR; find . -type f | sort > $DATA_DIR/cached-assets
 	diff -u $DATA_DIR/cached-assets $DATA_DIR/app-assets > $DATA_DIR/diff
 	echo "Change in assets:" | indent
 	cat $DATA_DIR/diff | indent
