@@ -1,4 +1,5 @@
 #!/bin/sh
+ASSETS_DIR=public
 
 indent() {
   sed -u 's/^/       /'
@@ -9,12 +10,23 @@ run() {
 	eval "$*" 2>&1 | indent
 }
 
-echo "-----> heroku-buildpack-assets"
+BUILD_DIR=$1	# points to the top directory of the app
+APP_CACHE_DIR=$2/heroku-buildpack-assets/app
+ASSETS_CACHE_DIR=$2/heroku-buildpack-assets/assets/$ASSETS_DIR
+DATA_DIR=`mktemp -d || exit 1`
 
-BUILD_DIR=$1
-CACHE_DIR=$2
-ENV_DIR=$3
+echo "-----> Checking updated assets"
+CODE_RELEASE=1
+if [[-d $ASSETS_CACHE_DIR ]]; then
+	find $BUILD_DIR/$ASSETS_DIR -type f | sort > $DATA_DIR/app-assets
+	find $ASSETS_CACHE_DIR -type f | sort > $DATA_DIR/cached-assets
+	diff -u $DATA_DIR/cached-assets $DATA_DIR/app-assets > $DATA_DIR/diff
+	echo "Change in assets:" | indent
+	cat $DATA_DIR/diff | indent
+	grep -q ^+ $DATA_DIR/diff && echo "New assets found" && CODE_RELEASE=0
+else
+	echo "No cached assets for $ASSETS_DIR/ found"
+fi
 
-run ls -R $BUILD_DIR
-run ls -R $CACHE_DIR
-run ls -R $ENV_DIR
+echo "-----> Caching current assets"
+rsync -av --delete $BUILD_DIR/$ASSETS_DIR/ $ASSETS_CACHE_DIR/
